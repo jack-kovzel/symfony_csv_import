@@ -1,0 +1,30 @@
+php:
+    container_name: tt-php
+    build: php
+    volumes:
+        - ./app:/app
+        - ./app/var/cache:/app/var/cache
+        - /tmp
+    links:
+        - mysql
+nginx:
+  container_name: tt-nginx
+  build: nginx
+  volumes:
+      - ./app:/app
+  links:
+      - php
+  environment:
+    VIRTUAL_HOST: tt.local
+  ports:
+    - "80:80"
+
+mysql:
+    build: mysql
+    container_name: tt-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    ports:
+     - "3306:3306"
+    volumes:
+      - ./db:/var/lib/mysql
