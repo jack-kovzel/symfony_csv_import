@@ -101,7 +101,7 @@ class ImportCommand extends ContainerAwareCommand
 		$costAndStockFilter->add(function ($item) {
 			if($item['Cost in GBP'] < 5 && $item['Stock'] < 10) {
 				$message = sprintf('Product: %s, message: %s',
-					'['.implode(', ', $item).']',
+					$item['Product Code'],
 					'Cost < 5 and Stock < 10'
 				);
 				throw new CostAndStockException($message);
@@ -152,8 +152,8 @@ class ImportCommand extends ContainerAwareCommand
 				if ($exception instanceof ValidationException) {
 					/* @var $violation ConstraintViolation */
 					foreach ($exception->getViolations() as $violation) {
-						$message = sprintf('Product: %s, message: %s',
-							'[' . implode(', ', $violation->getRoot()) . ']',
+						$message = sprintf('Product code: %s, message: %s',
+							$violation->getRoot()['Product Code'],
 							$violation->getMessage()
 						);
 

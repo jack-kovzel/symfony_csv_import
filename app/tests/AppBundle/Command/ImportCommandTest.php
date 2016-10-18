@@ -75,4 +75,21 @@ class ImportCommandTest extends KernelTestCase
 		);
 		$this->assertEquals('Total: 27 objects. Imported: 25, not imported: 2' . PHP_EOL, $this->commandTester->getDisplay());
 	}
+
+
+	/**
+	 * Test import with wrong item's which cost < 5$ and stock < 10
+	 */
+	public function testExecuteWithWrongCostAndStock()
+	{
+		$this->commandTester->execute(
+			array(
+				'format' => 'csv',
+				'file' => __DIR__ . '/../Fixtures/items_with_invalid_cost_and_stock.csv',
+				'--test' => true,
+			)
+		);
+
+		$this->assertEquals('Total: 3 objects. Imported: 2, not imported: 1' . PHP_EOL, $this->commandTester->getDisplay());
+	}
 }
