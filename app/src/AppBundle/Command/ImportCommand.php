@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Product;
 use AppBundle\Exception\FormatNotFoundException;
 use AppBundle\Factory\ReaderFactory;
 use Ddeboer\DataImport\Exception\ValidationException;
@@ -65,7 +66,7 @@ class ImportCommand extends ContainerAwareCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$format = $input->getArgument(self::ARGUMENT_FORMAT);
-		$file = $input->getArgument(self::ARGUMENT_FILE);
+		$file 	= $input->getArgument(self::ARGUMENT_FILE);
 
 		try {
 			$reader = ReaderFactory::getReader($format, $file);
@@ -81,33 +82,6 @@ class ImportCommand extends ContainerAwareCommand
 
 		$reader->setHeaderRowNumber(0);
 
-		$writer = $this->getWriter($input);
-
-		$validator = $this->getContainer()->get('validator');
-		$filter = new ValidatorStep($validator);
-		$filter->throwExceptions();
-		$filter->add('Cost in GBP', new Assert\LessThan([
-			'value' => 1000,
-			'message' => 'Cost should be less than {{ compared_value }}',
-		]));
-
-        $converterStep = new ValueConverterStep();
-        $converterStep
-            ->add('[Discontinued]', function ($v) {
-                return $v == 'yes' ? new \DateTime() : null;
-            });
-
-		$costAndStockFilter = new FilterStep();
-		$costAndStockFilter->add(function ($item) {
-			if($item['Cost in GBP'] < 5 && $item['Stock'] < 10) {
-				$message = sprintf('Product: %s, message: %s',
-					$item['Product Code'],
-					'Cost < 5 and Stock < 10'
-				);
-				throw new CostAndStockException($message);
-			}
-		});
-
 		$mappingStep = new MappingStep([
 			'[Product Code]' => '[strProductCode]',
 			'[Product Name]' => '[strProductName]',
@@ -117,15 +91,49 @@ class ImportCommand extends ContainerAwareCommand
 			'[Discontinued]' => '[dtmDiscontinued]',
 		]);
 
+		$converterStep = new ValueConverterStep();
+		$converterStep
+			->add('[dtmDiscontinued]', function ($v) {
+				return $v == 'yes' ? new \DateTime() : null;
+			});
+
+		$validator = $this->getContainer()->get('validator');
+		$filter = new ValidatorStep($validator);
+		$filter->throwExceptions();
+		$filter->add('fltCost', new Assert\LessThan([
+			'value' => 1000,
+			'message' => 'Cost should be less than {{ compared_value }}',
+		]));
+
+		/* @var $metadata \Symfony\Component\Validator\Mapping\ClassMetadata */
+		$metadata = $validator->getMetadataFor(new Product());
+		foreach ($metadata->properties as $attribute => $propertyMetadata) {
+			foreach ($propertyMetadata->getConstraints() as $constraint) {
+				$filter->add($attribute, $constraint);
+			}
+		}
+
+
+		$costAndStockFilter = new FilterStep();
+		$costAndStockFilter->add(function ($item) {
+			if($item['fltCost'] < 5 && $item['intStock'] < 10) {
+				$message = sprintf('Product: %s, message: %s',
+					$item['strProductCode'],
+					'Cost < 5 and Stock < 10'
+				);
+				throw new CostAndStockException($message);
+			}
+		});
+
 		$workflow = new Workflow($reader);
 		$workflow->setSkipItemOnFailure(true);
 
         $result = $workflow
-			->addStep($filter)
-			->addStep($mappingStep)
-			->addStep($costAndStockFilter)
-			->addStep($converterStep)
-			->addWriter($writer)
+			->addStep($mappingStep, 4)
+			->addStep($converterStep, 3)
+			->addStep($filter, 2)
+			->addStep($costAndStockFilter, 1)
+			->addWriter($this->getWriter($input))
 			->process();
 
 		$message = sprintf('Total: %s objects. Imported: %s, not imported: %s',
@@ -153,7 +161,7 @@ class ImportCommand extends ContainerAwareCommand
 					/* @var $violation ConstraintViolation */
 					foreach ($exception->getViolations() as $violation) {
 						$message = sprintf('Product code: %s, message: %s',
-							$violation->getRoot()['Product Code'],
+							$violation->getRoot()['strProductCode'],
 							$violation->getMessage()
 						);
 
