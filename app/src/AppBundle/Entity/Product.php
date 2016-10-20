@@ -28,22 +28,31 @@ class Product
 
     /**
      * @var string
-     * @ORM\Column(name="strProductName", type="string", length=50)
+     *
      * @Assert\NotBlank(message="Product name is blank");
+     * @Assert\Type(type="string");
+	 *
+	 * @ORM\Column(name="strProductName", type="string", length=50)
      */
     protected $strProductName;
 
     /**
      * @var string
-     * @ORM\Column(name="strProductDesc", type="string", length=255)
-     * @Assert\NotBlank(message="Product desc is blank");
+     *
+	 * @Assert\NotBlank(message="Product desc is blank");
+	 * @Assert\Type(type="string")
+	 *
+	 * @ORM\Column(name="strProductDesc", type="string", length=255)
      */
     protected $strProductDesc;
 
     /**
      * @var string
-     * @ORM\Column(name="strProductCode", type="string", length=10, unique=true)
-     * @Assert\NotBlank(message="Product code is blank")
+	 *
+	 * @Assert\NotBlank(message="Product code is blank")
+	 * @Assert\Type(type="string")
+	 *
+	 * @ORM\Column(name="strProductCode", type="string", length=10, unique=true)
      */
     protected $strProductCode;
 
@@ -55,30 +64,32 @@ class Product
 
     /**
      * @var \DateTime
+	 *
+	 * @Assert\DateTime(message="This property should be DateTime")
+	 *
      * @ORM\Column(name="dtmDiscontinued", type="datetime", nullable=true)
      */
     protected $dtmDiscontinued;
 
     /**
      * @var int
-     * @Assert\Type(type="numeric", message="Property stock should be of type numeric")
-     * @Assert\NotBlank(message="Property stock is blank")
+	 *
+	 * @Assert\NotBlank(message="Property stock is blank")
+     * @Assert\Type(type="numeric")
+	 *
      * @ORM\Column(name="intStock", type="integer")
      */
     protected $intStock;
 
     /**
      * @var float
-     * @Assert\Type(type="numeric", message="Property cost should be of type numeric")
+	 *
      * @Assert\NotBlank(message="Property cost is blank")
+	 * @Assert\Type(type="numeric")
+     *
      * @ORM\Column(name="fltCost", type="float", options={"unsigned"=true})
      */
     protected $fltCost;
-
-    /**
-     * @var string|null
-     */
-    protected $discontinued;
 
     /**
      * @var \DateTime
@@ -127,25 +138,6 @@ class Product
     public function getFltCost()
     {
         return $this->fltCost;
-    }
-
-    /**
-     * @param $discontinued
-     * @return $this
-     */
-    public function setDiscontinued($discontinued)
-    {
-        $this->discontinued = $discontinued;
-
-        return $this;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getDiscontinued()
-    {
-        return $this->discontinued;
     }
 
     /**
