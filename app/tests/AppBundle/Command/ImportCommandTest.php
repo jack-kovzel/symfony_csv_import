@@ -73,7 +73,7 @@ class ImportCommandTest extends KernelTestCase
 				'--test' => true,
 			)
 		);
-		$this->assertEquals('Total: 27 objects. Imported: 25, not imported: 2' . PHP_EOL, $this->commandTester->getDisplay());
+		$this->assertEquals('Total: 27 objects. Imported: 23, not imported: 4' . PHP_EOL, $this->commandTester->getDisplay());
 	}
 
 
