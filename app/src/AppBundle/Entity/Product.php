@@ -29,7 +29,7 @@ class Product
     /**
      * @var string
      *
-     * @Assert\NotBlank(message="Product name is blank");
+     * @Assert\NotBlank(message="Product name should not be blank");
      * @Assert\Type(type="string");
 	 *
 	 * @ORM\Column(name="strProductName", type="string", length=50)
@@ -39,7 +39,7 @@ class Product
     /**
      * @var string
      *
-	 * @Assert\NotBlank(message="Product desc is blank");
+	 * @Assert\NotBlank(message="Product desc should not be blank");
 	 * @Assert\Type(type="string")
 	 *
 	 * @ORM\Column(name="strProductDesc", type="string", length=255)
@@ -49,7 +49,7 @@ class Product
     /**
      * @var string
 	 *
-	 * @Assert\NotBlank(message="Product code is blank")
+	 * @Assert\NotBlank(message="Product should not be blank")
 	 * @Assert\Type(type="string")
 	 *
 	 * @ORM\Column(name="strProductCode", type="string", length=10, unique=true)
@@ -65,7 +65,7 @@ class Product
     /**
      * @var \DateTime
 	 *
-	 * @Assert\DateTime(message="This property should be DateTime")
+	 * @Assert\DateTime(message="This property should be a DateTime")
 	 *
      * @ORM\Column(name="dtmDiscontinued", type="datetime", nullable=true)
      */
@@ -74,8 +74,8 @@ class Product
     /**
      * @var int
 	 *
-	 * @Assert\NotBlank(message="Property stock is blank")
-     * @Assert\Type(type="numeric")
+	 * @Assert\NotBlank(message="Stock should not be blank")
+     * @Assert\Type(type="numeric", message="Stock should be of type integer")
 	 *
      * @ORM\Column(name="intStock", type="integer")
      */
@@ -84,8 +84,8 @@ class Product
     /**
      * @var float
 	 *
-     * @Assert\NotBlank(message="Property cost is blank")
-	 * @Assert\Type(type="numeric")
+     * @Assert\NotBlank(message="Cost cost should not be blank")
+	 * @Assert\Type(type="numeric", message="Cost should be of type integer")
      *
      * @ORM\Column(name="fltCost", type="float", options={"unsigned"=true})
      */
