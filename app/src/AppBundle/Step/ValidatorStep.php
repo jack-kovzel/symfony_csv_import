@@ -9,95 +9,95 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidatorStep extends \Ddeboer\DataImport\Step\ValidatorStep
 {
-	/**
-	 * @var array
-	 */
-	protected $constraints = [];
+    /**
+     * @var array
+     */
+    protected $constraints = [];
 
-	/**
-	 * @var array
-	 */
-	protected $violations = [];
+    /**
+     * @var array
+     */
+    protected $violations = [];
 
-	/**
-	 * @var boolean
-	 */
-	protected $throwExceptions = false;
+    /**
+     * @var bool
+     */
+    protected $throwExceptions = false;
 
-	/**
-	 * @var integer
-	 */
-	protected $line = 1;
+    /**
+     * @var int
+     */
+    protected $line = 1;
 
-	/**
-	 * @var ValidatorInterface
-	 */
-	protected $validator;
+    /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
 
-	protected $allowExtraFields = false;
+    protected $allowExtraFields = false;
 
-	public function __construct(ValidatorInterface $validator)
-	{
-		$this->validator = $validator;
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
 
-		parent::__construct($validator);
-	}
+        parent::__construct($validator);
+    }
 
-	/**
-	 * @param boolean $allowExtraFields
-	 */
-	public function setAllowExtraFields($allowExtraFields)
-	{
-		$this->allowExtraFields = (bool)$allowExtraFields;
-	}
+    /**
+     * @param bool $allowExtraFields
+     */
+    public function setAllowExtraFields($allowExtraFields)
+    {
+        $this->allowExtraFields = (bool) $allowExtraFields;
+    }
 
-	public function throwExceptions($flag = true)
-	{
-		$this->throwExceptions = $flag;
-	}
+    public function throwExceptions($flag = true)
+    {
+        $this->throwExceptions = $flag;
+    }
 
-	/**
-	 * @param string     $field
-	 * @param Constraint $constraint
-	 *
-	 * @return $this
-	 */
-	public function add($field, Constraint $constraint)
-	{
-		if (!isset($this->constraints[$field])) {
-			$this->constraints[$field] = [];
-		}
+    /**
+     * @param string     $field
+     * @param Constraint $constraint
+     *
+     * @return $this
+     */
+    public function add($field, Constraint $constraint)
+    {
+        if (!isset($this->constraints[$field])) {
+            $this->constraints[$field] = [];
+        }
 
-		$this->constraints[$field][] = $constraint;
+        $this->constraints[$field][] = $constraint;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getViolations()
-	{
-		return $this->violations;
-	}
+    /**
+     * @return array
+     */
+    public function getViolations()
+    {
+        return $this->violations;
+    }
 
-	public function process(&$item)
-	{
-		$constraints = new Constraints\Collection($this->constraints);
-		$constraints->allowExtraFields = true;
+    public function process(&$item)
+    {
+        $constraints = new Constraints\Collection($this->constraints);
+        $constraints->allowExtraFields = true;
 
-		$list = $this->validator->validate($item, $constraints);
+        $list = $this->validator->validate($item, $constraints);
 
-		if (count($list) > 0) {
-			$this->violations[$this->line] = $list;
+        if (count($list) > 0) {
+            $this->violations[$this->line] = $list;
 
-			if ($this->throwExceptions) {
-				throw new ValidationException($list, $this->line);
-			}
-		}
+            if ($this->throwExceptions) {
+                throw new ValidationException($list, $this->line);
+            }
+        }
 
-		$this->line++;
+        ++$this->line;
 
-		return 0 === count($list);
-	}
+        return 0 === count($list);
+    }
 }

@@ -1,0 +1,7 @@
+services:
+    product.helper:
+        class: AppBundle\Helper\ProductHelper
+        arguments: ["@validator"]
+    product.import:
+        class: AppBundle\Service\ProductImportService
+        arguments: ["@doctrine.orm.entity_manager", "@validator", "@product.helper", "%%product.import.conf%%"]

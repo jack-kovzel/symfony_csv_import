@@ -1,17 +1,11 @@
 <?php
 
-/**
- * Product entity
- */
-
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class Product
- * @package CsvBundle\Entity
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Table(name="tblProductData", indexes={@ORM\Index(name="strProductCode_idx", columns={"strProductCode"})})
@@ -24,234 +18,246 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $intProductDataId;
+    protected $id;
 
     /**
      * @var string
      *
      * @Assert\NotBlank(message="Product name should not be blank");
      * @Assert\Type(type="string");
-	 *
-	 * @ORM\Column(name="strProductName", type="string", length=50)
+     *
+     * @ORM\Column(name="strProductName", type="string", length=50)
      */
-    protected $strProductName;
+    protected $productName;
 
     /**
      * @var string
      *
-	 * @Assert\NotBlank(message="Product desc should not be blank");
-	 * @Assert\Type(type="string")
-	 *
-	 * @ORM\Column(name="strProductDesc", type="string", length=255)
+     * @Assert\NotBlank(message="Product desc should not be blank");
+     * @Assert\Type(type="string")
+     *
+     * @ORM\Column(name="strProductDesc", type="string", length=255)
      */
-    protected $strProductDesc;
+    protected $productDesc;
 
     /**
      * @var string
-	 *
-	 * @Assert\NotBlank(message="Product should not be blank")
-	 * @Assert\Type(type="string")
-	 *
-	 * @ORM\Column(name="strProductCode", type="string", length=10, unique=true)
+     *
+     * @Assert\NotBlank(message="Product should not be blank")
+     * @Assert\Type(type="string")
+     *
+     * @ORM\Column(name="strProductCode", type="string", length=10, unique=true)
      */
-    protected $strProductCode;
+    protected $productCode;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="dtmAdded", type="datetime", nullable=true)
      */
-    protected $dtmAdded;
+    protected $createdAt;
 
     /**
      * @var \DateTime
-	 *
-	 * @Assert\DateTime(message="This property should be a DateTime")
-	 *
+     *
+     * @Assert\DateTime(message="This property should be a DateTime")
+     *
      * @ORM\Column(name="dtmDiscontinued", type="datetime", nullable=true)
      */
-    protected $dtmDiscontinued;
+    protected $dateDiscontinued;
 
     /**
      * @var int
-	 *
-	 * @Assert\NotBlank(message="Stock should not be blank")
+     *
+     * @Assert\NotBlank(message="Stock should not be blank")
      * @Assert\Type(type="numeric", message="Stock should be of type integer")
-	 *
+     *
      * @ORM\Column(name="intStock", type="integer")
      */
-    protected $intStock;
+    protected $stock;
 
     /**
      * @var float
-	 *
+     *
      * @Assert\NotBlank(message="Cost cost should not be blank")
-	 * @Assert\Type(type="numeric", message="Cost should be of type integer")
+     * @Assert\Type(type="numeric", message="Cost should be of type integer")
      *
      * @ORM\Column(name="fltCost", type="float", options={"unsigned"=true})
      */
-    protected $fltCost;
+    protected $cost;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="stmTimestamp", type="datetime")
      */
-    protected $stmTimestamp;
+    protected $updatedAt;
 
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function setStmTimestamp()
+    public function setUpdatedAt()
     {
-        $this->stmTimestamp = new \DateTime();
+        $this->updatedAt = new \DateTime();
+
+        return $this;
     }
 
     /**
-     * @param $intStock
+     * @param $stock
+     *
      * @return $this
      */
-    public function setIntStock($intStock)
+    public function setStock($stock)
     {
-        return  $this->intStock = $intStock;
+        $this->stock = $stock;
+
+        return $this;
     }
 
     /**
      * @return int
      */
-    public function getIntStock()
+    public function getStock()
     {
-        return $this->intStock;
+        return $this->stock;
     }
 
     /**
-     * @param $fltCost
+     * @param $cost
+     *
      * @return $this
      */
-    public function setFltCost($fltCost)
+    public function setCost($cost)
     {
-        return $this->fltCost = $fltCost;
+        $this->cost = $cost;
+
+        return $this;
     }
 
     /**
      * @return float
      */
-    public function getFltCost()
+    public function getCost()
     {
-        return $this->fltCost;
+        return $this->cost;
     }
 
     /**
-     * Get intProductDataId
+     * Get intProductDataId.
      *
-     * @return integer
+     * @return int
      */
-    public function getIntProductDataId()
+    public function getId()
     {
-        return $this->intProductDataId;
+        return $this->id;
     }
 
     /**
-     * Set strProductName
+     * Set strProductName.
      *
-     * @param string $strProductName
+     * @param string $productName
      *
      * @return Product
      */
-    public function setStrProductName($strProductName)
+    public function setProductName($productName)
     {
-        $this->strProductName = $strProductName;
+        $this->productName = $productName;
 
         return $this;
     }
 
     /**
-     * Get strProductName
+     * Get strProductName.
      *
      * @return string
      */
-    public function getStrProductName()
+    public function getProductName()
     {
-        return $this->strProductName;
+        return $this->productName;
     }
 
     /**
-     * Set strProductDesc
+     * Set strProductDesc.
      *
-     * @param string $strProductDesc
+     * @param string $productDesc
      *
      * @return Product
      */
-    public function setStrProductDesc($strProductDesc)
+    public function setProductDesc($productDesc)
     {
-        $this->strProductDesc = $strProductDesc;
+        $this->productDesc = $productDesc;
 
         return $this;
     }
 
     /**
-     * Get strProductDesc
+     * Get strProductDesc.
      *
      * @return string
      */
-    public function getStrProductDesc()
+    public function getProductDesc()
     {
-        return $this->strProductDesc;
+        return $this->productDesc;
     }
 
     /**
-     * Set strProductCode
+     * Set strProductCode.
      *
-     * @param string $strProductCode
+     * @param string $productCode
      *
      * @return Product
      */
-    public function setStrProductCode($strProductCode)
+    public function setProductCode($productCode)
     {
-        $this->strProductCode = $strProductCode;
+        $this->productCode = $productCode;
 
         return $this;
     }
 
     /**
-     * Get strProductCode
+     * Get strProductCode.
      *
      * @return string
      */
-    public function getStrProductCode()
+    public function getProductCode()
     {
-        return $this->strProductCode;
+        return $this->productCode;
     }
 
     /**
      * @ORM\PrePersist
      */
-    public function setDtmAdded()
+    public function setCreatedAt()
     {
-        $this->dtmAdded = new \DateTime();
+        $this->createdAt = new \DateTime();
+
+        return $this;
     }
 
     /**
-     * Get dtmAdded
+     * Get dtmAdded.
      *
      * @return \DateTime
      */
-    public function getDtmAdded()
+    public function getCreatedAt()
     {
-        return $this->dtmAdded;
+        return $this->createdAt;
     }
 
-    public function setDtmDiscontinued(\DateTime $dtmDiscontinued)
+    public function setDateDiscontinued(\DateTime $dateDiscontinued)
     {
-		$this->dtmDiscontinued = $dtmDiscontinued;
+        $this->dateDiscontinued = $dateDiscontinued;
+
+        return $this;
     }
 
     /**
-     * Get dtmDiscontinued
+     * Get dtmDiscontinued.
      *
      * @return \DateTime
      */
-    public function getDtmDiscontinued()
+    public function getDateDiscontinued()
     {
-        return $this->dtmDiscontinued;
+        return $this->dateDiscontinued;
     }
 }
