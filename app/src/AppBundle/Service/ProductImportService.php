@@ -15,8 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface as Validator;
 use AppBundle\Error\ProductImportError;
-use Ddeboer\DataImport\Exception\ValidationException;
-use AppBundle\Exception\CostAndStockException;
 
 class ProductImportService
 {
@@ -24,10 +22,12 @@ class ProductImportService
      * @var EntityManager
      */
     protected $em;
+
     /**
      * @var Validator
      */
     protected $validator;
+
     /**
      * @var ProductHelper
      */
@@ -36,15 +36,12 @@ class ProductImportService
     /**
      * @var int
      */
-    protected $totalProcessedCount;
+    protected $totalProcessedCount = 0;
+
     /**
      * @var int
      */
-    protected $successCount;
-    /**
-     * @var int
-     */
-    protected $errorCount;
+    protected $successCount = 0;
 
     /**
      * @var ProductImportError[]
@@ -82,9 +79,15 @@ class ProductImportService
     /**
      * @return int
      */
-    public function getErrorCount()
+    public function getUniqueErrorsCount()
     {
-        return $this->errorCount;
+        $uniqueErrors = [];
+
+        foreach ($this->errors as $error) {
+            $uniqueErrors[$error->getPCode()] = $error;
+        }
+
+        return count($uniqueErrors);
     }
 
     /**
@@ -127,12 +130,14 @@ class ProductImportService
         $costAndStockFilter = new FilterStep();
         $costAndStockFilter->add(function ($item) {
             if ($item['cost'] < self::PRODUCT_CONDITION_COST && $item['stock'] < self::PRODUCT_CONDITION_STOCK) {
-                $message = sprintf('Product: %s, message: %s',
-                    $item['productCode'],
-                    'Cost < '.self::PRODUCT_CONDITION_COST.' and Stock < '.self::PRODUCT_CONDITION_STOCK.' '
-                );
-                throw new CostAndStockException($message);
+                $message = 'Cost < '.self::PRODUCT_CONDITION_COST.' and Stock < '.self::PRODUCT_CONDITION_STOCK.' ';
+                $error = new ProductImportError($item['productCode'], $message);
+                $this->storeError($error);
+
+                return false;
             }
+
+            return true;
         });
 
         $workflow = new Workflow($reader);
@@ -146,20 +151,14 @@ class ProductImportService
             ->addWriter($writer)
             ->process();
 
-        $this->totalProcessedCount = $result->getTotalProcessedCount();
+        $this->totalProcessedCount = $result->getTotalProcessedCount() + $this->getUniqueErrorsCount();
         $this->successCount = $result->getSuccessCount();
-        $this->errorCount = $result->getErrorCount();
 
         if ($result->hasErrors()) {
             foreach ($result->getExceptions() as $exception) {
-                if ($exception instanceof ValidationException) {
-                    /* @var $violation ConstraintViolation */
-                    foreach ($exception->getViolations() as $violation) {
-                        $error = new ProductImportError($violation->getRoot()['productCode'], $violation->getMessage());
-                        $this->storeError($error);
-                    }
-                } elseif ($exception instanceof CostAndStockException) {
-                    $error = new ProductImportError('', $exception->getMessage());
+                /* @var $violation ConstraintViolation */
+                foreach ($exception->getViolations() as $violation) {
+                    $error = new ProductImportError($violation->getRoot()['productCode'], $violation->getMessage());
                     $this->storeError($error);
                 }
             }
@@ -168,6 +167,7 @@ class ProductImportService
 
     /**
      * @param ProductImportError $error
+     *
      * @return $this
      */
     protected function storeError(ProductImportError $error)

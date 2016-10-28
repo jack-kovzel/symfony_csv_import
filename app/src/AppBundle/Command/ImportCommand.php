@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Exception\FormatNotFoundException;
 use AppBundle\Factory\ReaderFactory;
+use Ddeboer\DataImport\Writer;
 use Ddeboer\DataImport\Writer\ArrayWriter;
 use Ddeboer\DataImport\Writer\DoctrineWriter;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -74,7 +75,7 @@ class ImportCommand extends ContainerAwareCommand
         $message = sprintf('Total: %s objects. Imported: %s, not imported: %s',
             $productImportService->getTotalProcessedCount(),
             $productImportService->getSuccessCount(),
-            $productImportService->getErrorCount()
+            $productImportService->getUniqueErrorsCount()
         );
         $output->writeln($message);
 
@@ -93,7 +94,7 @@ class ImportCommand extends ContainerAwareCommand
     /**
      * @param InputInterface $input
      *
-     * @return ArrayWriter|DoctrineWriter
+     * @return Writer
      */
     protected function getWriter(InputInterface $input)
     {
