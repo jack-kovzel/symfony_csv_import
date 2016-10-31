@@ -82,11 +82,7 @@ class ImportCommand extends ContainerAwareCommand
         if ($input->getOption('verbose')) {
             $output->writeln('Products that not be imported: ');
             foreach ($productImportService->getErrors() as $error) {
-                $message = sprintf('Product code: %s, message: %s',
-                    $error->getPCode(),
-                    $error->getMessage()
-                );
-                $output->writeln($message);
+                $output->writeln($error->getFullMessage());
             }
         }
     }

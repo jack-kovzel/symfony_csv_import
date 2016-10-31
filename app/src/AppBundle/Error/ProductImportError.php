@@ -8,6 +8,7 @@ class ProductImportError
      * @var string
      */
     protected $pCode;
+
     /**
      * @var string
      */
@@ -37,5 +38,16 @@ class ProductImportError
     {
         $this->pCode = $pCode;
         $this->message = $message;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullMessage()
+    {
+        return sprintf('Product code: %s, message: %s',
+            $this->getPCode(),
+            $this->getMessage()
+        );
     }
 }
