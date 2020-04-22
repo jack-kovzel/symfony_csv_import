@@ -1,27 +1,27 @@
 php:
-    container_name: tt-php
+    container_name: sci-php
     build: php
     volumes:
-        - ./app:/app
-        - ./app/var/cache:/app/var/cache
+        - ./../app:/app
+        - ./../app/var/cache:/app/var/cache
         - /tmp
     links:
         - mysql
 nginx:
-  container_name: tt-nginx
+  container_name: sci-nginx
   build: nginx
   volumes:
-      - ./app:/app
+      - ./../app:/app
   links:
       - php
   environment:
-    VIRTUAL_HOST: tt.local
+    VIRTUAL_HOST: sci.local
   ports:
     - "80:80"
 
 mysql:
     build: mysql
-    container_name: tt-mysql
+    container_name: sci-mysql
     environment:
       MYSQL_ROOT_PASSWORD: pass
     ports:

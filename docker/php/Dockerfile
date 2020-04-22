@@ -10,32 +10,35 @@ COPY conf/pool.conf /usr/local/etc/php/
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y zlib1g-dev libicu-dev g++
+RUN apt-get update
+
+RUN apt-get install -y \
+     apt-utils \
+     zlib1g-dev \
+     libicu-dev \
+     g++ \
+     less \
+     libssl-dev \
+     libzip-dev \
+     git \
+     zip
+
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install intl
 
-RUN apt-install \
-    apt-utils \
-    less \
-    libssl-dev \
-    git \
-    zip \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libpng12-dev
+RUN mkdir -p /tmp
 
-RUN mkdir -p /tmp \
-    && docker-php-ext-configure gd \
-    --with-freetype-dir=/usr/include/ \
-    --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install \
-    gd \
-    pdo \
-    pdo_mysql \
-    pcntl \
-    && docker-php-pecl-install zip memcached opcache
+RUN docker-php-ext-install \
+     pdo \
+     pdo_mysql \
+     pcntl
 
-RUN pecl install xdebug \
+RUN docker-php-pecl-install \
+     zip \
+     memcached \
+     opcache
+
+RUN pecl install xdebug-2.5.5 \
     && docker-php-ext-enable xdebug \
     && sed -i '1 a xdebug.remote_autostart=true' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && sed -i '1 a xdebug.remote_mode=req' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

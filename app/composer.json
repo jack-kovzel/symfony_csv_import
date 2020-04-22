@@ -18,7 +18,7 @@
     },
     "require": {
         "php": ">=5.5.9",
-        "symfony/symfony": "3.0.*",
+        "symfony/symfony": "^3.4",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
@@ -33,7 +33,8 @@
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^2.7",
         "phpunit/phpunit": "^4.8",
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsstream": "^1.6",
+        "friendsofphp/php-cs-fixer": "^2.16"
     },
     "scripts": {
         "post-install-cmd": [
