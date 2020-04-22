@@ -12,7 +12,7 @@ before_install:
 
 script:
   - docker-compose build
-  - docker-compose up
+  - docker-compose up -d
   - docker-compose exec sci-php vendor/bin/phpunit
   - docker-compose exec sci-php vendor/php-cs-fixer fix src --dry-run
   - docker-compose exec sci-php vendor/phpstan analyze src
