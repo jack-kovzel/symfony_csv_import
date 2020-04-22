@@ -1,17 +1,17 @@
 php:
     container_name: sci-php
-    build: php
+    build: docker/php
     volumes:
-        - ./../app:/app
-        - ./../app/var/cache:/app/var/cache
+        - ./app:/app
+        - ./app/var/cache:/app/var/cache
         - /tmp
     links:
         - mysql
 nginx:
   container_name: sci-nginx
-  build: nginx
+  build: docker/nginx
   volumes:
-      - ./../app:/app
+      - ./app:/app
   links:
       - php
   environment:
@@ -20,7 +20,7 @@ nginx:
     - "80:80"
 
 mysql:
-    build: mysql
+    build: docker/mysql
     container_name: sci-mysql
     environment:
       MYSQL_ROOT_PASSWORD: pass
