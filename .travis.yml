@@ -3,16 +3,18 @@ services:
   - docker
 
 env:
-  COMPOSE_VERSION: 1.4.1
+  COMPOSE_VERSION: 1.8.0
 
 before_install:
  - curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
  - chmod +x docker-compose
  - sudo mv docker-compose /usr/local/bin
 
+before_script:
+  - docker-compose up --build -d
+  - docker-compose exec php composer install --dev --no-interaction
+
 script:
-  - docker-compose build
-  - docker-compose up -d
-  - docker-compose exec sci-php vendor/bin/phpunit
-  - docker-compose exec sci-php vendor/php-cs-fixer fix src --dry-run
-  - docker-compose exec sci-php vendor/phpstan analyze src
+  - docker-compose exec php vendor/bin/phpunit
+  - docker-compose exec php vendor/bin/php-cs-fixer fix src --dry-run
+  - docker-compose exec php vendor/bin/phpstan analyze src

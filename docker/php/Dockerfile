@@ -2,16 +2,12 @@ FROM php:7.1-fpm
 
 RUN usermod -u 1000 www-data
 
-COPY bin/* /usr/local/bin/
-RUN chmod +x -R /usr/local/bin/
-
 COPY conf/php.ini /usr/local/etc/php/conf.d/
 COPY conf/pool.conf /usr/local/etc/php/
 
 WORKDIR /app
 
 RUN apt-get update
-
 RUN apt-get install -y \
      apt-utils \
      zlib1g-dev \
@@ -21,10 +17,13 @@ RUN apt-get install -y \
      libssl-dev \
      libzip-dev \
      git \
-     zip
+     zip \
+     wget
 
-RUN docker-php-ext-configure intl
-RUN docker-php-ext-install intl
+RUN wget -O /usr/local/bin/composer https://getcomposer.org/download/1.10.5/composer.phar
+
+COPY bin/* /usr/local/bin/
+RUN chmod +x -R /usr/local/bin/
 
 RUN mkdir -p /tmp
 

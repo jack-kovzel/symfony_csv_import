@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jack-kovzel/symfony_csv_import.svg?branch=master)](https://travis-ci.org/jack-kovzel/symfony_csv_import)
+
 This project represents Symfony console application for import product's items to MySQL database.
 
 Command example:
