@@ -1,4 +1,4 @@
-This project represent symfony console application for import product's items to MySQL database.
+This project represents Symfony console application for import product's items to MySQL database.
 
 Command example:
 

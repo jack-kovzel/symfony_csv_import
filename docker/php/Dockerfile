@@ -1,4 +1,4 @@
-FROM php:5.6-fpm
+FROM php:7.1-fpm
 
 RUN usermod -u 1000 www-data
 
@@ -35,7 +35,6 @@ RUN docker-php-ext-install \
 
 RUN docker-php-pecl-install \
      zip \
-     memcached \
      opcache
 
 RUN pecl install xdebug-2.5.5 \
