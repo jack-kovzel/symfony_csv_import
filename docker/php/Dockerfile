@@ -33,12 +33,12 @@ RUN docker-php-ext-install \
      pdo_mysql \
      pcntl
 
-RUN docker-php-pecl-install \
+RUN pecl install \
+     xdebug-2.5.5 \
      zip \
      opcache
 
-RUN pecl install xdebug-2.5.5 \
-    && docker-php-ext-enable xdebug \
+RUN docker-php-ext-enable xdebug \
     && sed -i '1 a xdebug.remote_autostart=true' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && sed -i '1 a xdebug.remote_mode=req' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && sed -i '1 a xdebug.remote_handler=dbgp' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \

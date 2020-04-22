@@ -19,6 +19,7 @@ class ReaderFactory
     public static function getReader($format, $target)
     {
         $instance = null;
+
         switch ($format) {
             case 'csv':
                 $instance = self::getCsvReader($target);
@@ -29,16 +30,17 @@ class ReaderFactory
 
         return $instance;
     }
+
     /**
-     * @param $file
+     * @param string $filePath
      *
      * @return Reader\CsvReader
      */
-    protected static function getCsvReader($file)
+    protected static function getCsvReader(string $filePath)
     {
         try {
-            $file = new \SplFileObject($file);
-            $instance = new Reader\CsvReader($file);
+            $filePath = new \SplFileObject($filePath);
+            $instance = new Reader\CsvReader($filePath);
             $instance->setHeaderRowNumber(0); //set headers
             return $instance;
         } catch (\Exception $ex) {

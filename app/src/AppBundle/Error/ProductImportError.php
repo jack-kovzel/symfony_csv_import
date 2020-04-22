@@ -7,7 +7,7 @@ class ProductImportError
     /**
      * @var string
      */
-    protected $pCode;
+    protected $productCode;
 
     /**
      * @var string
@@ -17,9 +17,9 @@ class ProductImportError
     /**
      * @return string
      */
-    public function getPCode()
+    public function getProductCode()
     {
-        return $this->pCode;
+        return $this->productCode;
     }
 
     /**
@@ -31,12 +31,12 @@ class ProductImportError
     }
 
     /**
-     * @param $pCode
-     * @param $message
+     * @param string $productCode
+     * @param string $message
      */
-    public function __construct($pCode, $message)
+    public function __construct(string $productCode, string $message)
     {
-        $this->pCode = $pCode;
+        $this->productCode = $productCode;
         $this->message = $message;
     }
 
@@ -45,8 +45,9 @@ class ProductImportError
      */
     public function getFullMessage()
     {
-        return sprintf('Product code: %s, message: %s',
-            $this->getPCode(),
+        return sprintf(
+            'Product code: %s, message: %s',
+            $this->getProductCode(),
             $this->getMessage()
         );
     }
