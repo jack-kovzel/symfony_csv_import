@@ -2,26 +2,25 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Error\ProductImportError;
 use AppBundle\Helper\ProductHelper;
+use AppBundle\Step\ValidatorStep;
 use Ddeboer\DataImport\Reader;
-use Ddeboer\DataImport\Writer;
-use Doctrine\ORM\EntityManager;
+use Ddeboer\DataImport\Step\FilterStep;
 use Ddeboer\DataImport\Step\MappingStep;
 use Ddeboer\DataImport\Step\ValueConverterStep;
-use Ddeboer\DataImport\Step\FilterStep;
-use AppBundle\Step\ValidatorStep;
 use Ddeboer\DataImport\Workflow\StepAggregator as Workflow;
+use Ddeboer\DataImport\Writer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface as Validator;
-use AppBundle\Error\ProductImportError;
 
 class ProductImportService
 {
-    /**
-     * @var EntityManager
-     */
-    protected $em;
+    const PRODUCT_MAX_COST = 1000;
+
+    const PRODUCT_CONDITION_COST = 5;
+    const PRODUCT_CONDITION_STOCK = 10;
 
     /**
      * @var Validator
@@ -48,14 +47,12 @@ class ProductImportService
      */
     protected $errors = [];
 
-    const PRODUCT_MAX_COST = 1000;
-
-    const PRODUCT_CONDITION_COST = 5;
-    const PRODUCT_CONDITION_STOCK = 10;
-
-    public function __construct(EntityManager $em, Validator $validator, ProductHelper $helper, $c)
+    /**
+     * @param Validator $validator
+     * @param ProductHelper $helper
+     */
+    public function __construct(Validator $validator, ProductHelper $helper)
     {
-        $this->em = $em;
         $this->validator = $validator;
         $this->helper = $helper;
     }
@@ -84,7 +81,7 @@ class ProductImportService
         $uniqueErrors = [];
 
         foreach ($this->errors as $error) {
-            $uniqueErrors[$error->getPCode()] = $error;
+            $uniqueErrors[$error->getProductCode()] = $error;
         }
 
         return count($uniqueErrors);
@@ -111,7 +108,7 @@ class ProductImportService
         $converterStep = new ValueConverterStep();
         $converterStep
             ->add('[dateDiscontinued]', function ($item) {
-                return $item == 'yes' ? new \DateTime() : null;
+                return 'yes' == $item ? new \DateTime() : null;
             });
 
         $filter = new ValidatorStep($this->validator);

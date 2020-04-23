@@ -3,14 +3,20 @@
 namespace AppBundle\Step;
 
 use Ddeboer\DataImport\Exception\ValidationException;
-use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use \Ddeboer\DataImport\Step\ValidatorStep as DdeboerValidatorStep;
 
-class ValidatorStep extends \Ddeboer\DataImport\Step\ValidatorStep
+class ValidatorStep extends DdeboerValidatorStep
 {
     /**
-     * @var array
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
+    /**
+     * @var Constraint[]
      */
     protected $constraints = [];
 
@@ -30,12 +36,13 @@ class ValidatorStep extends \Ddeboer\DataImport\Step\ValidatorStep
     protected $line = 1;
 
     /**
-     * @var ValidatorInterface
+     * @var bool
      */
-    protected $validator;
-
     protected $allowExtraFields = false;
 
+    /**
+     * @param ValidatorInterface $validator
+     */
     public function __construct(ValidatorInterface $validator)
     {
         $this->validator = $validator;
@@ -51,13 +58,16 @@ class ValidatorStep extends \Ddeboer\DataImport\Step\ValidatorStep
         $this->allowExtraFields = (bool) $allowExtraFields;
     }
 
+    /**
+     * @param bool $flag
+     */
     public function throwExceptions($flag = true)
     {
         $this->throwExceptions = $flag;
     }
 
     /**
-     * @param string     $field
+     * @param string $field
      * @param Constraint $constraint
      *
      * @return $this
@@ -81,6 +91,13 @@ class ValidatorStep extends \Ddeboer\DataImport\Step\ValidatorStep
         return $this->violations;
     }
 
+    /**
+     * @param $item
+     *
+     * @return bool
+     *
+     * @throws ValidationException
+     */
     public function process(&$item)
     {
         $constraints = new Constraints\Collection($this->constraints);

@@ -14,6 +14,7 @@ class Product
 {
     /**
      * @var int
+     *
      * @ORM\Column(name="intProductDataId", type="integer", options={"unsigned"=true})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -52,6 +53,7 @@ class Product
 
     /**
      * @var \DateTime
+     *
      * @ORM\Column(name="dtmAdded", type="datetime", nullable=true)
      */
     protected $createdAt;
@@ -87,6 +89,7 @@ class Product
 
     /**
      * @var \DateTime
+     *
      * @ORM\Column(name="stmTimestamp", type="datetime")
      */
     protected $updatedAt;
@@ -103,11 +106,11 @@ class Product
     }
 
     /**
-     * @param $stock
+     * @param int $stock
      *
      * @return $this
      */
-    public function setStock($stock)
+    public function setStock(int $stock)
     {
         $this->stock = $stock;
 
@@ -123,11 +126,11 @@ class Product
     }
 
     /**
-     * @param $cost
+     * @param float $cost
      *
      * @return $this
      */
-    public function setCost($cost)
+    public function setCost(float $cost)
     {
         $this->cost = $cost;
 
@@ -143,8 +146,6 @@ class Product
     }
 
     /**
-     * Get intProductDataId.
-     *
      * @return int
      */
     public function getId()
@@ -153,8 +154,6 @@ class Product
     }
 
     /**
-     * Set strProductName.
-     *
      * @param string $productName
      *
      * @return Product
@@ -167,8 +166,6 @@ class Product
     }
 
     /**
-     * Get strProductName.
-     *
      * @return string
      */
     public function getProductName()
@@ -177,8 +174,6 @@ class Product
     }
 
     /**
-     * Set strProductDesc.
-     *
      * @param string $productDesc
      *
      * @return Product
@@ -191,8 +186,6 @@ class Product
     }
 
     /**
-     * Get strProductDesc.
-     *
      * @return string
      */
     public function getProductDesc()
@@ -201,8 +194,6 @@ class Product
     }
 
     /**
-     * Set strProductCode.
-     *
      * @param string $productCode
      *
      * @return Product
@@ -215,8 +206,6 @@ class Product
     }
 
     /**
-     * Get strProductCode.
-     *
      * @return string
      */
     public function getProductCode()
@@ -235,8 +224,6 @@ class Product
     }
 
     /**
-     * Get dtmAdded.
-     *
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -244,6 +231,11 @@ class Product
         return $this->createdAt;
     }
 
+    /**
+     * @param \DateTime $dateDiscontinued
+     *
+     * @return $this
+     */
     public function setDateDiscontinued(\DateTime $dateDiscontinued)
     {
         $this->dateDiscontinued = $dateDiscontinued;
@@ -252,8 +244,6 @@ class Product
     }
 
     /**
-     * Get dtmDiscontinued.
-     *
      * @return \DateTime
      */
     public function getDateDiscontinued()

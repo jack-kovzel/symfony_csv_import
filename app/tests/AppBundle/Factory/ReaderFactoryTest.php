@@ -6,13 +6,12 @@ use AppBundle\Exception\FormatNotFoundException;
 use AppBundle\Factory\ReaderFactory;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\content\LargeFileContent;
+use org\bovigo\vfs\vfsStreamFile;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Ddeboer\DataImport\Reader\CsvReader;
 
-/**
- * Class ReaderFactoryTest.
- */
-class ReaderFactoryTest extends \PHPUnit_Framework_TestCase
+class ReaderFactoryTest extends TestCase
 {
     /**
      * Testing get reader of the bad format.
@@ -20,49 +19,46 @@ class ReaderFactoryTest extends \PHPUnit_Framework_TestCase
     public function testBadFormat()
     {
         $file = 'test.txt';
-        $format = 'test';
-        try {
-            $reader = ReaderFactory::getReader($format, $file);
-            $this->fail('Must throw FormatNotFoundException');
-        } catch (FormatNotFoundException $ex) {
-        }
+
+        $this->expectException(FormatNotFoundException::class);
+
+        ReaderFactory::getReader('test', $file);
     }
+
     /**
      * Testing get reader of not exists file.
-     *
-     * @throws FormatNotFoundException
      */
     public function testNotExistsFile()
     {
         $file = 'test.csv';
-        $format = 'csv';
-        try {
-            $reader = ReaderFactory::getReader($format, $file);
-            $this->fail('Must throw FileNotFoundException');
-        } catch (FileNotFoundException $ex) {
-        }
+
+        $this->expectException(FileNotFoundException::class);
+
+        ReaderFactory::getReader('csv', $file);
     }
+
     /**
      * Testing get reader for valid data.
-     *
-     * @throws FormatNotFoundException
      */
     public function testExistsFile()
     {
         $file = $this->getValidFile();
-        $format = 'csv';
-        $reader = ReaderFactory::getReader($format, $file->url());
+        $reader = ReaderFactory::getReader('csv', $file->url());
+
         $this->assertInstanceOf(CsvReader::class, $reader);
     }
+
     /**
      * Simulate the file.
      *
-     * @return $this
+     * @return vfsStreamFile
      */
     private function getValidFile()
     {
         $root = vfsStream::setup();
 
-        return vfsStream::newFile('foo.csv', 0777)->withContent(LargeFileContent::withKilobytes(100))->at($root);
+        return vfsStream::newFile('foo.csv', 0777)
+            ->withContent(LargeFileContent::withKilobytes(100))
+            ->at($root);
     }
 }
